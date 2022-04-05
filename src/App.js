@@ -3,12 +3,12 @@ import './App.css';
 import Cookies from 'js-cookie';
 import Web3 from 'web3';
 
-const client = new WebSocket("wss://" + window.location.host + "/proxy/ws");
+const client = new WebSocket("ws://" + window.location.host + "/proxy/ws");
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { messages: {}, selected: '', me: '', newMessage: '', loginUser: '', loggedIn: false, web3Provider: '' };
+    this.state = { messages: {}, selected: '', me: '', newMessage: '', loginUser: '', loggedIn: false, web3Provider: '', newChat: '' };
   }
 
   async componentDidMount() {
@@ -85,6 +85,10 @@ class App extends React.Component {
 
   handleNewMessage = (event) => {
     this.setState({ newMessage: event.target.value })
+  }
+
+  newChatChange = (event) => {
+    this.setState({ newChat: event.target.value })
   }
 
   handleSubmit = (event) => {
@@ -165,6 +169,12 @@ class App extends React.Component {
     this.setState({ loginUser: event.target.value })
   }
 
+  newChat = (event) => {
+    event.preventDefault();
+    this.selectPerson(this.state.newChat)
+    this.setState({ newChat: '' })
+  }
+
   render() {
     return (
       <div>
@@ -175,11 +185,16 @@ class App extends React.Component {
             <button onClick={this.logout}>Logout</button>
             <h3>Previous Chats</h3>
             {this.renderbase()}
+
+            <div> <form onSubmit={this.newChat}>
+              <input type="text" value={this.state.newChat} onChange={this.newChatChange} />
+              <input type="submit" value="newChat" />
+            </form></div>
           </tbody>
           {this.state.selected == '' ? <p></p> : <div><h3>Messages to {this.state.selected}</h3>
-            {this.state.messages[this.state.selected].map((obj, i) => <div>
+            {this.state.messages[this.state.selected] != undefined ? this.state.messages[this.state.selected].map((obj, i) => <div>
               <p>{obj.From == this.state.selected ? <b>Received: </b> : <b>sent: </b>} {obj.Text}</p>
-            </div>)}
+            </div>) : <div></div>}
             <form onSubmit={this.handleSubmit}>
               <label>
                 Message:
