@@ -3,7 +3,7 @@ import './App.css';
 import Cookies from 'js-cookie';
 import Web3 from 'web3';
 
-const client = new WebSocket("ws://" + window.location.host + "/proxy/ws");
+const client = new WebSocket("wss://" + window.location.host + "/proxy/ws");
 
 class App extends React.Component {
   constructor(props) {
