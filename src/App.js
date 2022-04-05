@@ -3,7 +3,7 @@ import './App.css';
 import Cookies from 'js-cookie';
 import Web3 from 'web3';
 
-const client = new WebSocket("ws://" + window.location.host + "/ws");
+const client = new WebSocket("ws://" + window.location.host + "/proxy/ws");
 
 class App extends React.Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class App extends React.Component {
     const accounts = await kk.eth.requestAccounts();
     var account = accounts[0]
     
-    fetch("/messages")
+    fetch("/proxy/messages")
         .then(async (res) => {
           if (res.status == 200) {
             var body = await res.json()
@@ -29,7 +29,7 @@ class App extends React.Component {
   }
 
   initialize = () => {
-    fetch("/messages")
+    fetch("/proxy/messages")
       .then(async (res) => {
         if (res.status == 200) {
           var body = await res.json()
@@ -101,7 +101,7 @@ class App extends React.Component {
     this.setState({ loginUser: account })
     var users = {};
 
-    users = await fetch("/accounts/" + account)
+    users = await fetch("/proxy/accounts/" + account)
       .then(res => res.json())
 
     if (Object.keys(users).length === 0) {
@@ -110,7 +110,7 @@ class App extends React.Component {
     }
 
     this.handleSignMessage(users.Address, users.Nonce)
-      .then(({ publicAddress, signature }) => fetch(`/auth`, {
+      .then(({ publicAddress, signature }) => fetch(`/proxy/auth`, {
         body: JSON.stringify({ account, signature }),
         headers: {
           'Content-Type': 'application/json'
@@ -152,7 +152,7 @@ class App extends React.Component {
   };
 
   logout = (event) => {
-    fetch("/logout")
+    fetch("/proxy/logout")
       .then(res => {
         if (res.status == 200) {
           this.setState({ loggedIn: false })
