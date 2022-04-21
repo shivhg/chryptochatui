@@ -12,7 +12,12 @@ const client = new WebSocket("wss://" + "cryptop2pchat.herokuapp.com" + "/ws" + 
 function WithRedirect() {
   let navigate = useNavigate();
 
-  return (<AppCopy navigate={navigate} id={1} />)
+  return (<div>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<AppCopy navigate={navigate} id={1} />} />
+    </Routes>
+  </div>)
 }
 
 class AppCopy extends React.Component {
@@ -125,7 +130,7 @@ class AppCopy extends React.Component {
     this.setState({ loggedIn: false })
     localStorage.clear('loggedInUser')
     localStorage.clear('loggedInUserToken')
-    this.state.navigate("/login")
+    this.state.navigate("/")
   }
 
   login = (event) => {
@@ -140,11 +145,6 @@ class AppCopy extends React.Component {
   render() {
     return (
       <div>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/messages" element={<Messages />} />
-        </Routes>
-
         <div>
           {this.state.loggedIn ? <div>
             <tbody>
