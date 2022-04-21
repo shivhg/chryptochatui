@@ -7,7 +7,7 @@ import Input from '@mui/material/Input';
 import { Route, Routes, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import Web3 from 'web3';
 
-const client = new WebSocket("ws://" + "cryptop2pchat.herokuapp.com" + "/ws" + "?Authorization=" + localStorage.getItem('loggedInUserToken'));
+const client = new WebSocket("wss://" + "cryptop2pchat.herokuapp.com" + "/ws" + "?Authorization=" + localStorage.getItem('loggedInUserToken'));
 
 function WithRedirect() {
   let navigate = useNavigate();
