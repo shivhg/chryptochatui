@@ -7,7 +7,7 @@ import Input from '@mui/material/Input';
 import { Route, Routes, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import Web3 from 'web3';
 
-const client = new WebSocket("ws://" + "localhost:8080" + "/ws" + "?Authorization=" + localStorage.getItem('loggedInUserToken'));
+const client = new WebSocket("ws://" + "cryptop2pchat.herokuapp.com" + "/ws" + "?Authorization=" + localStorage.getItem('loggedInUserToken'));
 
 function WithRedirect() {
   let navigate = useNavigate();
@@ -33,7 +33,7 @@ class AppCopy extends React.Component {
     var loggedInUserToken = localStorage.getItem('loggedInUserToken')
 
     if (user != null) {
-      fetch("http://localhost:8080/messages", {
+      fetch("http://cryptop2pchat.herokuapp.com/messages", {
         method: 'get', headers: new Headers({
           'Authorization': loggedInUserToken,
         })
@@ -62,15 +62,18 @@ class AppCopy extends React.Component {
     client.onmessage = (evt) => {
       var messages = evt.data;
       var myobj = JSON.parse(messages);
+      var newWalletSelect = '';
       var allMessages = { ...this.state.messages }
-      console.log(myobj, allMessages)
       if (myobj.From === this.state.me) {
-        allMessages[myobj.To] = [...allMessages[myobj.To], myobj]
+        allMessages[myobj.To] == undefined ? allMessages[myobj.To] = [myobj] : allMessages[myobj.To] = [...allMessages[myobj.To], myobj]
+        newWalletSelect = myobj.To
       } else {
-        allMessages[myobj.From] = [...allMessages[myobj.From], myobj]
+        allMessages[myobj.From] == undefined ? allMessages[myobj.From] = [myobj] : allMessages[myobj.From] = [...allMessages[myobj.From], myobj]
+        newWalletSelect = myobj.From
       }
 
       this.setState({ messages: allMessages, newMessage: '' })
+      this.selectPerson(newWalletSelect)
     };
     client.onclose = (message) => {
       console.log(message);
@@ -95,8 +98,11 @@ class AppCopy extends React.Component {
 
   newChat = (event) => {
     event.preventDefault();
+    var allMessages = { ...this.state.messages };
+    allMessages[this.state.newChat] = []
+
     this.selectPerson(this.state.newChat)
-    this.setState({ newChat: '' })
+    this.setState({ newChat: '', messages: allMessages })
   }
 
   selectPerson = (person) => {
@@ -199,7 +205,7 @@ class Login extends React.Component {
     const accounts = await kk.eth.requestAccounts();
     var account = accounts[0]
 
-    var users = await fetch("http://localhost:8080/accounts/" + account)
+    var users = await fetch("http://cryptop2pchat.herokuapp.com/accounts/" + account)
       .then(res => res.json())
 
     if (Object.keys(users).length === 0) {
@@ -208,7 +214,7 @@ class Login extends React.Component {
     }
 
     this.handleSignMessage(users.Address, users.Nonce, kk)
-      .then(({ publicAddress, signature }) => fetch(`http://localhost:8080/auth-jwt`, {
+      .then(({ publicAddress, signature }) => fetch(`http://cryptop2pchat.herokuapp.com/auth-jwt`, {
         body: JSON.stringify({ account, signature }),
         headers: {
           'Content-Type': 'application/json'
