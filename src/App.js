@@ -14,18 +14,15 @@ class App extends React.Component {
   async componentDidMount() {
     const kk = new Web3(Web3.givenProvider || 'http://localhost:7545')
     this.setState({ web3Provider: kk })
-    console.log(Cookies.get('name'), "Cookies.get('name')")
-    const accounts = await kk.eth.requestAccounts();
-    var account = accounts[0]
-    
+
     fetch("/proxy/messages")
-        .then(async (res) => {
-          if (res.status == 200) {
-            var body = await res.json()
-            this.setState({ messages: body, loggedIn: true, me: Cookies.get('name') })
-            this.setUpWebsocket();
-          }
-        })
+      .then(async (res) => {
+        if (res.status == 200) {
+          var body = await res.json()
+          this.setState({ messages: body, loggedIn: true, me: Cookies.get('name') })
+          this.setUpWebsocket();
+        }
+      })
   }
 
   initialize = () => {
@@ -39,30 +36,7 @@ class App extends React.Component {
       })
   }
 
-  setUpWebsocket = () => {
-    client.onopen = () => {
-      console.log('WebSocket Client Connected');
-    };
-    client.onmessage = (evt) => {
-      var messages = evt.data;
-      var myobj = JSON.parse(messages);
-      var allMessages = { ...this.state.messages }
-      console.log(myobj, allMessages)
-      if (myobj.From === this.state.me) {
-        allMessages[myobj.To] = [...allMessages[myobj.To], myobj]
-      } else {
-        allMessages[myobj.From] = [...allMessages[myobj.From], myobj]
-      }
-
-      this.setState({ messages: allMessages, newMessage: '' })
-    };
-    client.onclose = (message) => {
-      console.log(message);
-    };
-    client.onerror = (message) => {
-      console.log(message);
-    };
-  }
+   
 
   selectPerson = (person) => {
     this.setState({ selected: person })
