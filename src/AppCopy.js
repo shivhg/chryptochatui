@@ -33,7 +33,7 @@ class AppCopy extends React.Component {
     var loggedInUserToken = localStorage.getItem('loggedInUserToken')
 
     if (user != null) {
-      fetch("http://cryptop2pchat.herokuapp.com/messages", {
+      fetch("https://cryptop2pchat.herokuapp.com/messages", {
         method: 'get', headers: new Headers({
           'Authorization': loggedInUserToken,
         })
@@ -205,7 +205,7 @@ class Login extends React.Component {
     const accounts = await kk.eth.requestAccounts();
     var account = accounts[0]
 
-    var users = await fetch("http://cryptop2pchat.herokuapp.com/accounts/" + account)
+    var users = await fetch("https://cryptop2pchat.herokuapp.com/accounts/" + account)
       .then(res => res.json())
 
     if (Object.keys(users).length === 0) {
@@ -214,7 +214,7 @@ class Login extends React.Component {
     }
 
     this.handleSignMessage(users.Address, users.Nonce, kk)
-      .then(({ publicAddress, signature }) => fetch(`http://cryptop2pchat.herokuapp.com/auth-jwt`, {
+      .then(({ publicAddress, signature }) => fetch(`https://cryptop2pchat.herokuapp.com/auth-jwt`, {
         body: JSON.stringify({ account, signature }),
         headers: {
           'Content-Type': 'application/json'
